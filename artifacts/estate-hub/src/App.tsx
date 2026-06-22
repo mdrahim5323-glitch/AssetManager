@@ -8,6 +8,7 @@ import LandingPage from "@/pages/landing";
 import DashboardPage from "@/pages/dashboard";
 import LeadsPage from "@/pages/leads";
 import LeadDetailPage from "@/pages/lead-detail";
+import PipelinePage from "@/pages/pipeline";
 import CustomersPage from "@/pages/customers";
 import CustomerDetailPage from "@/pages/customer-detail";
 import PropertiesPage from "@/pages/properties";
@@ -81,6 +82,9 @@ function Router() {
       </Route>
       <Route path="/leads">
         <ProtectedRoute component={LeadsPage} />
+      </Route>
+      <Route path="/pipeline">
+        <ProtectedRoute component={PipelinePage} />
       </Route>
       <Route path="/leads/:id">
         <ProtectedRoute component={LeadDetailPage} />

@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import {
   LayoutDashboard, Users, UserCheck, Building2, CreditCard,
   Calendar, FileText, UserCog, Umbrella, Activity, Settings,
-  ChevronLeft, ChevronRight, Menu, X, Building
+  ChevronLeft, ChevronRight, Menu, X, Building, Kanban
 } from "lucide-react";
 import { useClerk, useUser } from "@clerk/react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 const navItems = [
   { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { path: "/leads", label: "Leads", icon: UserCheck },
+  { path: "/pipeline", label: "Pipeline Board", icon: Kanban },
   { path: "/customers", label: "Customers", icon: Users },
   { path: "/properties", label: "Properties", icon: Building2 },
   { path: "/payments", label: "Payments", icon: CreditCard },
