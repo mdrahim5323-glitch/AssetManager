@@ -1,0 +1,2 @@
+- [Clerk React exports](clerk-react-exports.md) — This Clerk version exports `Show` not `SignedIn`/`SignedOut`; use `<Show when="signed-in">` for auth-gating
+- [Drizzle numeric fields](drizzle-numeric.md) — Postgres `numeric` columns must be written as `String(val)` on insert and read as `Number(r.field)` on output

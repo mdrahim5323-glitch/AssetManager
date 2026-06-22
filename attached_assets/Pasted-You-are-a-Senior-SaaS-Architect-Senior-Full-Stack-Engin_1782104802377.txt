@@ -1,0 +1,421 @@
+You are a Senior SaaS Architect, Senior Full Stack Engineer, and Database Architect.
+
+Build a production-ready Real Estate ERP + CRM SaaS platform called:
+
+ESTATE HUB
+
+The system must be built from scratch using:
+
+Frontend:
+- Next.js 15 (App Router)
+- TypeScript
+- Tailwind CSS
+- Shadcn UI
+
+Backend:
+- Supabase
+- PostgreSQL
+- Supabase Auth
+- Supabase Storage
+- Row Level Security (RLS)
+
+Deployment:
+- Vercel Ready
+- Production Ready
+
+=================================================
+
+ENVIRONMENT VARIABLES
+
+Create:
+
+.env.example
+
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+
+Use only these environment variables.
+
+=================================================
+
+PROJECT GOAL
+
+Build a complete Real Estate ERP system for real estate companies.
+
+The platform must support:
+
+1. Multi-Tenant SaaS
+2. Client Portal
+3. CRM
+4. Property Management
+5. Installment Management
+6. Sales Team Management
+7. Leave Management
+8. Document Management
+9. Activity Logs
+10. Role Based Access Control
+
+=================================================
+
+AUTHENTICATION
+
+Use Supabase Auth.
+
+Roles:
+
+- super_admin
+- company_admin
+- sales_manager
+- sales_executive
+- client
+
+Implement secure RBAC.
+
+=================================================
+
+MULTI TENANCY
+
+Create:
+
+companies
+
+table
+
+Fields:
+
+id
+name
+slug
+plan
+is_active
+created_at
+
+Every record in the database must belong to a company.
+
+=================================================
+
+DATABASE TABLES
+
+1. companies
+
+2. users
+
+3. leads
+
+4. customers
+
+5. properties
+
+6. property_ownerships
+
+7. payments
+
+8. installments
+
+9. tasks
+
+10. leave_requests
+
+11. audit_logs
+
+12. documents
+
+=================================================
+
+LEAD MANAGEMENT
+
+Fields:
+
+name
+phone
+source
+status
+assigned_to
+follow_up_date
+notes
+
+Lead Status:
+
+- New
+- Contacted
+- Interested
+- Site Visit
+- Negotiation
+- Booking
+- Sold
+
+Features:
+
+- Create Lead
+- Update Lead
+- Assign Lead
+- Follow Up
+- Search
+- Filter
+
+=================================================
+
+CUSTOMER MANAGEMENT
+
+Create full customer profiles.
+
+Fields:
+
+name
+phone
+email
+address
+nid
+notes
+
+=================================================
+
+PROPERTY MANAGEMENT
+
+Support:
+
+- Plot
+- Flat
+- Share
+
+Fields:
+
+project_name
+property_name
+unit_no
+location
+price
+status
+
+Status:
+
+- Available
+- Reserved
+- Sold
+
+=================================================
+
+PROPERTY OWNERSHIP
+
+Customer can own one or multiple properties.
+
+Fields:
+
+customer_id
+property_id
+purchase_price
+purchase_date
+ownership_type
+
+=================================================
+
+PAYMENT MANAGEMENT
+
+Fields:
+
+customer_id
+property_id
+total_amount
+paid_amount
+due_amount
+
+=================================================
+
+INSTALLMENT SYSTEM
+
+Fields:
+
+installment_no
+amount
+due_date
+paid_date
+status
+
+Status:
+
+- Pending
+- Paid
+- Overdue
+
+Client dashboard must display:
+
+- Total Paid
+- Total Due
+- Upcoming Installments
+- Payment History
+
+=================================================
+
+CLIENT PORTAL
+
+Client can login.
+
+Client can only see:
+
+- Own Property
+- Own Payments
+- Own Installments
+- Own Documents
+
+Pages:
+
+/client/dashboard
+/client/properties
+/client/payments
+/client/documents
+
+=================================================
+
+SALES TEAM DASHBOARD
+
+Sales Executive can see:
+
+- Assigned Leads
+- Follow Ups
+- Site Visits
+- Conversions
+
+=================================================
+
+USER MANAGEMENT
+
+Company Admin can:
+
+- Create Users
+- Edit Users
+- Assign Roles
+- Reset Password
+- Deactivate Users
+
+=================================================
+
+LEAVE MANAGEMENT
+
+Sales users can:
+
+- Request Leave
+
+Managers/Admins can:
+
+- Approve Leave
+- Reject Leave
+
+=================================================
+
+DOCUMENT CENTER
+
+Use Supabase Storage.
+
+Store:
+
+- NID
+- Booking Form
+- Agreement
+- Allotment Letter
+- Money Receipt
+
+=================================================
+
+ACTIVITY LOGS
+
+Track:
+
+- Lead Created
+- Lead Updated
+- Customer Updated
+- Property Assigned
+- Payment Added
+- Installment Paid
+- User Created
+
+=================================================
+
+DASHBOARDS
+
+Super Admin Dashboard
+
+- Total Companies
+- Total Users
+- Total Revenue
+
+Company Admin Dashboard
+
+- Total Leads
+- Total Customers
+- Total Sales
+- Total Collections
+
+Sales Dashboard
+
+- Assigned Leads
+- Follow Ups
+- Site Visits
+
+Client Dashboard
+
+- Property Summary
+- Payment Summary
+- Installment Summary
+
+=================================================
+
+SECURITY
+
+Implement:
+
+- Row Level Security (RLS)
+- Role Based Access
+- Company Data Isolation
+- Client Data Isolation
+
+Clients must never see another client's data.
+
+=================================================
+
+UI
+
+Modern SaaS UI.
+
+Sidebar:
+
+Dashboard
+Leads
+Customers
+Properties
+Payments
+Installments
+Documents
+Users
+Leave Management
+Activity Logs
+Settings
+
+Responsive:
+
+Desktop
+Tablet
+Mobile
+
+=================================================
+
+DEVELOPMENT ORDER
+
+1. Database Schema
+2. Supabase Setup
+3. Authentication
+4. RBAC
+5. Multi Tenancy
+6. CRM Module
+7. Property Module
+8. Payment Module
+9. Client Portal
+10. Leave Management
+11. Documents
+12. Activity Logs
+13. Final Testing
+
+Generate production-ready code.
+Do not use mock data.
+Use real Supabase integration.
+Ensure TypeScript passes with zero errors.
+Ensure build passes successfully.

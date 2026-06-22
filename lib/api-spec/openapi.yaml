@@ -3,20 +3,41 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Estate Hub — Real Estate ERP + CRM SaaS API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: dashboard
+    description: Dashboard aggregates and summaries
+  - name: leads
+    description: Lead management
+  - name: customers
+    description: Customer management
+  - name: properties
+    description: Property management
+  - name: ownerships
+    description: Property ownership records
+  - name: payments
+    description: Payment records
+  - name: installments
+    description: Installment schedule management
+  - name: users
+    description: User management
+  - name: leaves
+    description: Leave request management
+  - name: documents
+    description: Document management
+  - name: audit-logs
+    description: Audit log entries
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +45,1016 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # ─── DASHBOARD ───────────────────────────────────────────────
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get role-scoped dashboard summary
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/lead-pipeline:
+    get:
+      operationId: getLeadPipeline
+      tags: [dashboard]
+      summary: Lead counts grouped by status
+      responses:
+        "200":
+          description: Lead pipeline breakdown
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PipelineStage"
+
+  /dashboard/recent-activity:
+    get:
+      operationId: getRecentActivity
+      tags: [dashboard]
+      summary: Recent audit log activity feed
+      responses:
+        "200":
+          description: Recent activity entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuditLog"
+
+  /dashboard/collection-summary:
+    get:
+      operationId: getCollectionSummary
+      tags: [dashboard]
+      summary: Payment collection totals
+      responses:
+        "200":
+          description: Collection summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CollectionSummary"
+
+  # ─── LEADS ──────────────────────────────────────────────────
+  /leads:
+    get:
+      operationId: getLeads
+      tags: [leads]
+      summary: List leads
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: assigned_to
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of leads
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LeadListResponse"
+    post:
+      operationId: createLead
+      tags: [leads]
+      summary: Create a new lead
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LeadInput"
+      responses:
+        "201":
+          description: Created lead
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lead"
+
+  /leads/{id}:
+    get:
+      operationId: getLead
+      tags: [leads]
+      summary: Get a single lead
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Lead
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lead"
+    patch:
+      operationId: updateLead
+      tags: [leads]
+      summary: Update a lead
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LeadUpdate"
+      responses:
+        "200":
+          description: Updated lead
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lead"
+    delete:
+      operationId: deleteLead
+      tags: [leads]
+      summary: Delete a lead
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /leads/{id}/assign:
+    patch:
+      operationId: assignLead
+      tags: [leads]
+      summary: Assign a lead to a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LeadAssign"
+      responses:
+        "200":
+          description: Lead assigned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lead"
+
+  # ─── CUSTOMERS ──────────────────────────────────────────────
+  /customers:
+    get:
+      operationId: getCustomers
+      tags: [customers]
+      summary: List customers
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of customers
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerListResponse"
+    post:
+      operationId: createCustomer
+      tags: [customers]
+      summary: Create a new customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerInput"
+      responses:
+        "201":
+          description: Created customer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+
+  /customers/{id}:
+    get:
+      operationId: getCustomer
+      tags: [customers]
+      summary: Get a single customer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Customer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+    patch:
+      operationId: updateCustomer
+      tags: [customers]
+      summary: Update a customer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerUpdate"
+      responses:
+        "200":
+          description: Updated customer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+    delete:
+      operationId: deleteCustomer
+      tags: [customers]
+      summary: Delete a customer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ─── PROPERTIES ─────────────────────────────────────────────
+  /properties:
+    get:
+      operationId: getProperties
+      tags: [properties]
+      summary: List properties
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: property_type
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of properties
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PropertyListResponse"
+    post:
+      operationId: createProperty
+      tags: [properties]
+      summary: Create a new property
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PropertyInput"
+      responses:
+        "201":
+          description: Created property
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Property"
+
+  /properties/{id}:
+    get:
+      operationId: getProperty
+      tags: [properties]
+      summary: Get a single property
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Property
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Property"
+    patch:
+      operationId: updateProperty
+      tags: [properties]
+      summary: Update a property
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PropertyUpdate"
+      responses:
+        "200":
+          description: Updated property
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Property"
+    delete:
+      operationId: deleteProperty
+      tags: [properties]
+      summary: Delete a property
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /properties/stats:
+    get:
+      operationId: getPropertyStats
+      tags: [properties]
+      summary: Property counts grouped by status and type
+      responses:
+        "200":
+          description: Property stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PropertyStats"
+
+  # ─── OWNERSHIPS ─────────────────────────────────────────────
+  /ownerships:
+    get:
+      operationId: getOwnerships
+      tags: [ownerships]
+      summary: List property ownerships
+      parameters:
+        - name: customer_id
+          in: query
+          schema:
+            type: integer
+        - name: property_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of ownerships
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ownership"
+    post:
+      operationId: createOwnership
+      tags: [ownerships]
+      summary: Create a property ownership record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OwnershipInput"
+      responses:
+        "201":
+          description: Created ownership
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ownership"
+
+  /ownerships/{id}:
+    get:
+      operationId: getOwnership
+      tags: [ownerships]
+      summary: Get a single ownership record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Ownership
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ownership"
+    patch:
+      operationId: updateOwnership
+      tags: [ownerships]
+      summary: Update an ownership record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OwnershipUpdate"
+      responses:
+        "200":
+          description: Updated ownership
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ownership"
+
+  # ─── PAYMENTS ───────────────────────────────────────────────
+  /payments:
+    get:
+      operationId: getPayments
+      tags: [payments]
+      summary: List payment records
+      parameters:
+        - name: customer_id
+          in: query
+          schema:
+            type: integer
+        - name: property_id
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of payments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Payment"
+    post:
+      operationId: createPayment
+      tags: [payments]
+      summary: Create a payment record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentInput"
+      responses:
+        "201":
+          description: Created payment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payment"
+
+  /payments/{id}:
+    get:
+      operationId: getPayment
+      tags: [payments]
+      summary: Get a single payment record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Payment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payment"
+    patch:
+      operationId: updatePayment
+      tags: [payments]
+      summary: Update a payment record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentUpdate"
+      responses:
+        "200":
+          description: Updated payment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payment"
+
+  # ─── INSTALLMENTS ────────────────────────────────────────────
+  /installments:
+    get:
+      operationId: getInstallments
+      tags: [installments]
+      summary: List installments
+      parameters:
+        - name: payment_id
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: customer_id
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of installments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Installment"
+    post:
+      operationId: createInstallment
+      tags: [installments]
+      summary: Create an installment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InstallmentInput"
+      responses:
+        "201":
+          description: Created installment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Installment"
+
+  /installments/{id}:
+    get:
+      operationId: getInstallment
+      tags: [installments]
+      summary: Get a single installment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Installment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Installment"
+    patch:
+      operationId: updateInstallment
+      tags: [installments]
+      summary: Update an installment (e.g. mark paid)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InstallmentUpdate"
+      responses:
+        "200":
+          description: Updated installment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Installment"
+
+  /installments/upcoming:
+    get:
+      operationId: getUpcomingInstallments
+      tags: [installments]
+      summary: Get upcoming installments (due within 30 days)
+      parameters:
+        - name: customer_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Upcoming installments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Installment"
+
+  # ─── USERS ──────────────────────────────────────────────────
+  /users:
+    get:
+      operationId: getUsers
+      tags: [users]
+      summary: List users in the company
+      parameters:
+        - name: role
+          in: query
+          schema:
+            type: string
+        - name: is_active
+          in: query
+          schema:
+            type: boolean
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      operationId: createUser
+      tags: [users]
+      summary: Create a user (company admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserInput"
+      responses:
+        "201":
+          description: Created user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users/me:
+    get:
+      operationId: getMe
+      tags: [users]
+      summary: Get current authenticated user profile
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get a user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    patch:
+      operationId: updateUser
+      tags: [users]
+      summary: Update a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    delete:
+      operationId: deleteUser
+      tags: [users]
+      summary: Deactivate a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deactivated
+
+  # ─── LEAVE REQUESTS ──────────────────────────────────────────
+  /leaves:
+    get:
+      operationId: getLeaveRequests
+      tags: [leaves]
+      summary: List leave requests
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: user_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of leave requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeaveRequest"
+    post:
+      operationId: createLeaveRequest
+      tags: [leaves]
+      summary: Submit a leave request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LeaveRequestInput"
+      responses:
+        "201":
+          description: Created leave request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LeaveRequest"
+
+  /leaves/{id}:
+    get:
+      operationId: getLeaveRequest
+      tags: [leaves]
+      summary: Get a single leave request
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Leave request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LeaveRequest"
+    patch:
+      operationId: updateLeaveRequest
+      tags: [leaves]
+      summary: Approve or reject a leave request
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LeaveRequestUpdate"
+      responses:
+        "200":
+          description: Updated leave request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LeaveRequest"
+
+  # ─── DOCUMENTS ───────────────────────────────────────────────
+  /documents:
+    get:
+      operationId: getDocuments
+      tags: [documents]
+      summary: List documents
+      parameters:
+        - name: customer_id
+          in: query
+          schema:
+            type: integer
+        - name: property_id
+          in: query
+          schema:
+            type: integer
+        - name: doc_type
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Document"
+    post:
+      operationId: createDocument
+      tags: [documents]
+      summary: Create a document record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocumentInput"
+      responses:
+        "201":
+          description: Created document record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+
+  /documents/{id}:
+    get:
+      operationId: getDocument
+      tags: [documents]
+      summary: Get a document record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+    delete:
+      operationId: deleteDocument
+      tags: [documents]
+      summary: Delete a document record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ─── AUDIT LOGS ──────────────────────────────────────────────
+  /audit-logs:
+    get:
+      operationId: getAuditLogs
+      tags: [audit-logs]
+      summary: List audit log entries
+      parameters:
+        - name: entity_type
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of audit logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuditLog"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +1065,793 @@ components:
       required:
         - status
 
+    # ─── DASHBOARD SCHEMAS ───────────────────────────────────
+    DashboardSummary:
+      type: object
+      properties:
+        total_leads:
+          type: integer
+        total_customers:
+          type: integer
+        total_properties:
+          type: integer
+        total_revenue:
+          type: number
+        available_properties:
+          type: integer
+        sold_properties:
+          type: integer
+        reserved_properties:
+          type: integer
+        pending_installments:
+          type: integer
+        overdue_installments:
+          type: integer
+        my_assigned_leads:
+          type: ["integer", "null"]
+        my_follow_ups_today:
+          type: ["integer", "null"]
+      required:
+        - total_leads
+        - total_customers
+        - total_properties
+        - total_revenue
+        - available_properties
+        - sold_properties
+        - reserved_properties
+        - pending_installments
+        - overdue_installments
+
+    PipelineStage:
+      type: object
+      properties:
+        status:
+          type: string
+        count:
+          type: integer
+      required:
+        - status
+        - count
+
+    CollectionSummary:
+      type: object
+      properties:
+        total_amount:
+          type: number
+        total_paid:
+          type: number
+        total_due:
+          type: number
+        this_month_collected:
+          type: number
+      required:
+        - total_amount
+        - total_paid
+        - total_due
+        - this_month_collected
+
+    # ─── LEAD SCHEMAS ────────────────────────────────────────
+    Lead:
+      type: object
+      properties:
+        id:
+          type: integer
+        company_id:
+          type: integer
+        name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: ["string", "null"]
+        source:
+          type: string
+        status:
+          type: string
+        assigned_to:
+          type: ["integer", "null"]
+        assigned_user_name:
+          type: ["string", "null"]
+        follow_up_date:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+        - id
+        - company_id
+        - name
+        - phone
+        - source
+        - status
+        - created_at
+        - updated_at
+
+    LeadInput:
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        source:
+          type: string
+        status:
+          type: string
+        assigned_to:
+          type: ["integer", "null"]
+        follow_up_date:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+      required:
+        - name
+        - phone
+        - source
+
+    LeadUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        source:
+          type: string
+        status:
+          type: string
+        assigned_to:
+          type: ["integer", "null"]
+        follow_up_date:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+
+    LeadAssign:
+      type: object
+      properties:
+        assigned_to:
+          type: integer
+      required:
+        - assigned_to
+
+    LeadListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Lead"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required:
+        - data
+        - total
+        - page
+        - limit
+
+    # ─── CUSTOMER SCHEMAS ────────────────────────────────────
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+        company_id:
+          type: integer
+        name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        nid:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+        - id
+        - company_id
+        - name
+        - phone
+        - created_at
+        - updated_at
+
+    CustomerInput:
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        address:
+          type: string
+        nid:
+          type: string
+        notes:
+          type: string
+      required:
+        - name
+        - phone
+
+    CustomerUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        address:
+          type: string
+        nid:
+          type: string
+        notes:
+          type: string
+
+    CustomerListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Customer"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required:
+        - data
+        - total
+        - page
+        - limit
+
+    # ─── PROPERTY SCHEMAS ────────────────────────────────────
+    Property:
+      type: object
+      properties:
+        id:
+          type: integer
+        company_id:
+          type: integer
+        project_name:
+          type: string
+        property_name:
+          type: string
+        unit_no:
+          type: ["string", "null"]
+        location:
+          type: ["string", "null"]
+        property_type:
+          type: string
+        price:
+          type: number
+        status:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+        - id
+        - company_id
+        - project_name
+        - property_name
+        - property_type
+        - price
+        - status
+        - created_at
+        - updated_at
+
+    PropertyInput:
+      type: object
+      properties:
+        project_name:
+          type: string
+        property_name:
+          type: string
+        unit_no:
+          type: string
+        location:
+          type: string
+        property_type:
+          type: string
+        price:
+          type: number
+        status:
+          type: string
+      required:
+        - project_name
+        - property_name
+        - property_type
+        - price
+
+    PropertyUpdate:
+      type: object
+      properties:
+        project_name:
+          type: string
+        property_name:
+          type: string
+        unit_no:
+          type: string
+        location:
+          type: string
+        property_type:
+          type: string
+        price:
+          type: number
+        status:
+          type: string
+
+    PropertyStats:
+      type: object
+      properties:
+        available:
+          type: integer
+        reserved:
+          type: integer
+        sold:
+          type: integer
+        by_type:
+          type: array
+          items:
+            type: object
+            properties:
+              property_type:
+                type: string
+              count:
+                type: integer
+            required:
+              - property_type
+              - count
+      required:
+        - available
+        - reserved
+        - sold
+        - by_type
+
+    PropertyListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Property"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required:
+        - data
+        - total
+        - page
+        - limit
+
+    # ─── OWNERSHIP SCHEMAS ───────────────────────────────────
+    Ownership:
+      type: object
+      properties:
+        id:
+          type: integer
+        company_id:
+          type: integer
+        customer_id:
+          type: integer
+        property_id:
+          type: integer
+        customer_name:
+          type: ["string", "null"]
+        property_name:
+          type: ["string", "null"]
+        project_name:
+          type: ["string", "null"]
+        purchase_price:
+          type: number
+        purchase_date:
+          type: string
+        ownership_type:
+          type: string
+        created_at:
+          type: string
+      required:
+        - id
+        - company_id
+        - customer_id
+        - property_id
+        - purchase_price
+        - purchase_date
+        - ownership_type
+        - created_at
+
+    OwnershipInput:
+      type: object
+      properties:
+        customer_id:
+          type: integer
+        property_id:
+          type: integer
+        purchase_price:
+          type: number
+        purchase_date:
+          type: string
+        ownership_type:
+          type: string
+      required:
+        - customer_id
+        - property_id
+        - purchase_price
+        - purchase_date
+        - ownership_type
+
+    OwnershipUpdate:
+      type: object
+      properties:
+        purchase_price:
+          type: number
+        purchase_date:
+          type: string
+        ownership_type:
+          type: string
+
+    # ─── PAYMENT SCHEMAS ─────────────────────────────────────
+    Payment:
+      type: object
+      properties:
+        id:
+          type: integer
+        company_id:
+          type: integer
+        customer_id:
+          type: integer
+        property_id:
+          type: integer
+        customer_name:
+          type: ["string", "null"]
+        property_name:
+          type: ["string", "null"]
+        total_amount:
+          type: number
+        paid_amount:
+          type: number
+        due_amount:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+        - id
+        - company_id
+        - customer_id
+        - property_id
+        - total_amount
+        - paid_amount
+        - due_amount
+        - created_at
+        - updated_at
+
+    PaymentInput:
+      type: object
+      properties:
+        customer_id:
+          type: integer
+        property_id:
+          type: integer
+        total_amount:
+          type: number
+        paid_amount:
+          type: number
+      required:
+        - customer_id
+        - property_id
+        - total_amount
+        - paid_amount
+
+    PaymentUpdate:
+      type: object
+      properties:
+        total_amount:
+          type: number
+        paid_amount:
+          type: number
+
+    # ─── INSTALLMENT SCHEMAS ─────────────────────────────────
+    Installment:
+      type: object
+      properties:
+        id:
+          type: integer
+        payment_id:
+          type: integer
+        company_id:
+          type: integer
+        installment_no:
+          type: integer
+        amount:
+          type: number
+        due_date:
+          type: string
+        paid_date:
+          type: ["string", "null"]
+        status:
+          type: string
+        customer_name:
+          type: ["string", "null"]
+        property_name:
+          type: ["string", "null"]
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+        - id
+        - payment_id
+        - company_id
+        - installment_no
+        - amount
+        - due_date
+        - status
+        - created_at
+        - updated_at
+
+    InstallmentInput:
+      type: object
+      properties:
+        payment_id:
+          type: integer
+        installment_no:
+          type: integer
+        amount:
+          type: number
+        due_date:
+          type: string
+        status:
+          type: string
+      required:
+        - payment_id
+        - installment_no
+        - amount
+        - due_date
+
+    InstallmentUpdate:
+      type: object
+      properties:
+        amount:
+          type: number
+        due_date:
+          type: string
+        paid_date:
+          type: string
+        status:
+          type: string
+
+    # ─── USER SCHEMAS ────────────────────────────────────────
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        company_id:
+          type: integer
+        clerk_user_id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+        - id
+        - company_id
+        - clerk_user_id
+        - name
+        - email
+        - role
+        - is_active
+        - created_at
+        - updated_at
+
+    UserInput:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+        clerk_user_id:
+          type: string
+      required:
+        - name
+        - email
+        - role
+        - clerk_user_id
+
+    UserUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        role:
+          type: string
+        is_active:
+          type: boolean
+
+    # ─── LEAVE REQUEST SCHEMAS ───────────────────────────────
+    LeaveRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        company_id:
+          type: integer
+        user_id:
+          type: integer
+        user_name:
+          type: ["string", "null"]
+        leave_type:
+          type: string
+        start_date:
+          type: string
+        end_date:
+          type: string
+        reason:
+          type: ["string", "null"]
+        status:
+          type: string
+        reviewed_by:
+          type: ["integer", "null"]
+        reviewed_at:
+          type: ["string", "null"]
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+        - id
+        - company_id
+        - user_id
+        - leave_type
+        - start_date
+        - end_date
+        - status
+        - created_at
+        - updated_at
+
+    LeaveRequestInput:
+      type: object
+      properties:
+        leave_type:
+          type: string
+        start_date:
+          type: string
+        end_date:
+          type: string
+        reason:
+          type: string
+      required:
+        - leave_type
+        - start_date
+        - end_date
+
+    LeaveRequestUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+        reason:
+          type: string
+
+    # ─── DOCUMENT SCHEMAS ────────────────────────────────────
+    Document:
+      type: object
+      properties:
+        id:
+          type: integer
+        company_id:
+          type: integer
+        customer_id:
+          type: ["integer", "null"]
+        property_id:
+          type: ["integer", "null"]
+        customer_name:
+          type: ["string", "null"]
+        property_name:
+          type: ["string", "null"]
+        doc_type:
+          type: string
+        file_name:
+          type: string
+        file_url:
+          type: string
+        uploaded_by:
+          type: ["integer", "null"]
+        created_at:
+          type: string
+      required:
+        - id
+        - company_id
+        - doc_type
+        - file_name
+        - file_url
+        - created_at
+
+    DocumentInput:
+      type: object
+      properties:
+        customer_id:
+          type: ["integer", "null"]
+        property_id:
+          type: ["integer", "null"]
+        doc_type:
+          type: string
+        file_name:
+          type: string
+        file_url:
+          type: string
+      required:
+        - doc_type
+        - file_name
+        - file_url
+
+    # ─── AUDIT LOG SCHEMAS ───────────────────────────────────
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: integer
+        company_id:
+          type: integer
+        user_id:
+          type: ["integer", "null"]
+        user_name:
+          type: ["string", "null"]
+        action:
+          type: string
+        entity_type:
+          type: string
+        entity_id:
+          type: ["integer", "null"]
+        description:
+          type: string
+        created_at:
+          type: string
+      required:
+        - id
+        - company_id
+        - action
+        - entity_type
+        - description
+        - created_at
