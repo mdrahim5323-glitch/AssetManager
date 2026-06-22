@@ -75,7 +75,9 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={LandingPage} />
+      <Route path="/sign-in" component={ClerkSignInPage} />
       <Route path="/sign-in/:rest*" component={ClerkSignInPage} />
+      <Route path="/sign-up" component={ClerkSignUpPage} />
       <Route path="/sign-up/:rest*" component={ClerkSignUpPage} />
       <Route path="/dashboard">
         <ProtectedRoute component={DashboardPage} />

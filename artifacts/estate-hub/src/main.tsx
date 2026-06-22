@@ -11,7 +11,12 @@ if (!clerkPubKey) {
 }
 
 createRoot(document.getElementById("root")!).render(
-  <ClerkProvider publishableKey={clerkPubKey} proxyUrl={clerkProxyUrl}>
+  <ClerkProvider
+    publishableKey={clerkPubKey}
+    proxyUrl={clerkProxyUrl}
+    signInUrl="/sign-in"
+    signUpUrl="/sign-up"
+  >
     <App />
   </ClerkProvider>
 );

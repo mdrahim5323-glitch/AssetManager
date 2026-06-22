@@ -1,2 +1,3 @@
 - [Clerk React exports](clerk-react-exports.md) — This Clerk version exports `Show` not `SignedIn`/`SignedOut`; use `<Show when="signed-in">` for auth-gating
 - [Drizzle numeric fields](drizzle-numeric.md) — Postgres `numeric` columns must be written as `String(val)` on insert and read as `Number(r.field)` on output
+- [Wouter catch-all route matching](wouter-catchall-routes.md) — `:rest*` does NOT match the base path without a trailing segment; always add an explicit exact route alongside the wildcard
